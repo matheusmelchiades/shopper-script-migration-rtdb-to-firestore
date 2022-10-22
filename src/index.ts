@@ -17,7 +17,7 @@ import migrators from "./migrators";
           })
           .catch((error) => {
             console.log("# MIGRATOR FAILED: ", name);
-            console.log()
+            console.log();
             console.log(error);
             return resolve();
           });
@@ -26,4 +26,7 @@ import migrators from "./migrators";
   );
 
   await Promise.all(executers);
+
+  console.log("\n# ALL MIGRATORS COMPLETED");
+  process.exit(0);
 })();

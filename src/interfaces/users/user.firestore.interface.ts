@@ -6,18 +6,21 @@ type Secrets = {
   cancel: string;
 };
 
-type SecretTypes = "supervisor" | keyof Secrets;
-
-export type UserMetadata = {
+type MetadataDriver = {
   secrets: Secrets;
   group_name: string;
+};
+
+type MetadataHelper = {
   user_id: string;
 };
+
+export type UserMetadata = MetadataDriver | MetadataHelper;
 
 export interface IUserFirestore {
   id: string;
   name: string;
   photo: string;
   type: USER_TYPE;
-  metadata: Partial<UserMetadata>;
+  metadata: UserMetadata;
 }
