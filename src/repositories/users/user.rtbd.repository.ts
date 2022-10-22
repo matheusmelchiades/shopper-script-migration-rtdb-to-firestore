@@ -1,17 +1,13 @@
+import * as fs from "fs";
+
 import { Repository } from "../repository.abstract";
 import { IUserRTDB } from "../../interfaces/users/user.rtdb.interface";
 import { Database } from "firebase-admin/lib/database/database";
 
-import * as fs from "fs";
+import { Cache } from "src/services/cache/cache.abstract";
 
-export class UserRTDBRepository extends Repository<Database, IUserRTDB> {
+export class UserRTDBRepository extends Repository<Database, IUserRTDB, Cache> {
   private path = "/app/users";
-  private cacheDir = __dirname + "/../../../tmp";
-  private cachePath = this.cacheDir + "/users-rtdb.json";
-
-  private hasLocalData(): boolean {
-    return fs.existsSync(this.cachePath);
-  }
 
   private async retrieveRemoteAllData(): Promise<IUserRTDB[]> {
     const snapshot = await this.instance.ref(this.path).get();
@@ -23,35 +19,12 @@ export class UserRTDBRepository extends Repository<Database, IUserRTDB> {
     return Object.values<IUserRTDB>(data).filter((item) => !!item.id);
   }
 
-  private async retrieveLocalAllData(): Promise<IUserRTDB[]> {
-    try {
-      const data = fs.readFileSync(this.cachePath, "utf8");
-
-      return JSON.parse(data);
-    } catch (err) {
-      console.log(err);
-      return [];
-    }
-  }
-
-  private saveLocalData(data: any): void {
-    try {
-      if (!fs.existsSync(this.cacheDir)) {
-        fs.mkdirSync(this.cacheDir, { recursive: true });
-      }
-
-      fs.writeFileSync(this.cachePath, JSON.stringify(data));
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   async findAll(): Promise<IUserRTDB[]> {
-    if (this.hasLocalData()) return this.retrieveLocalAllData();
+    if (this.cache.has()) return this.cache.load();
 
     const data = await this.retrieveRemoteAllData();
 
-    await this.saveLocalData(data);
+    await this.cache.save(data);
 
     return data;
   }

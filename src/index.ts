@@ -1,4 +1,4 @@
-import "./setup/firebase";
+import "./services/firebase";
 
 import { Migrator } from "./migrators/migrator.abstract";
 import migrators from "./migrators";
