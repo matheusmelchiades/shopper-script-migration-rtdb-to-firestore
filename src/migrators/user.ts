@@ -38,7 +38,12 @@ export class UserMigrator extends Migrator<
         const photoDB = await this.repositories.photos.findOne(data.id);
         const secrets = await this.repositories.secrets.findOne(data.id);
 
-        metadata.secrets = secrets;
+        metadata.secrets = {
+          lobby: secrets?.lobby_secret || "",
+          unload: secrets?.unload_secret || "",
+          cancel: secrets?.cancel_secret || "",
+        };
+
         photo = photoDB?.foto_motorista ?? photo;
       }
 

@@ -1,5 +1,5 @@
 export interface ISecretsRTDB {
-  lobby: string;
-  unload: string;
-  cancel: string;
+  cancel_secret: string;
+  lobby_secret: string;
+  unload_secret: string;
 }

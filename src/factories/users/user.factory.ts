@@ -6,19 +6,14 @@ export class UserRtdbToFirestoreFactory extends Factory<
   IUserRTDB,
   Partial<IUserFirestore>
 > {
-  static mapMetadata(
+  static mapRTDBMetadata(
     type: "HELPER" | "DRIVER",
     params: any
   ): IUserFirestore["metadata"] {
     const metadata = {} as IUserFirestore["metadata"];
 
     if (type === "DRIVER") {
-      metadata["group_name"] = params.group_name || "";
-      metadata["secrets"] = params.secrets || {};
-    }
-
-    if (type === "HELPER") {
-      metadata["user_id"] = params.user_id || "";
+      metadata["group_name"] = params.groupName || "";
     }
 
     return metadata;
@@ -33,7 +28,7 @@ export class UserRtdbToFirestoreFactory extends Factory<
     return {
       id: String(params.id),
       type,
-      metadata: UserRtdbToFirestoreFactory.mapMetadata(type, params),
+      metadata: UserRtdbToFirestoreFactory.mapRTDBMetadata(type, params),
     };
   }
 
