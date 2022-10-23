@@ -5,8 +5,8 @@ import { Repository } from "../repository.abstract";
 import { IUserFirestore } from "../../interfaces/users/user.firestore.interface";
 
 export class UserFirestoreRepository extends Repository<
-  BaseFirestoreRepository<IUserFirestore>,
-  IUserFirestore
+  IUserFirestore,
+  BaseFirestoreRepository<IUserFirestore>
 > {
   async findAll(): Promise<IUserFirestore[]> {
     return this.instance.find();
@@ -25,5 +25,9 @@ export class UserFirestoreRepository extends Repository<
     } catch (err) {
       console.log(err);
     }
+  }
+
+  findOne(reference: string): Promise<IUserFirestore> {
+    throw new Error("Method not implemented.");
   }
 }

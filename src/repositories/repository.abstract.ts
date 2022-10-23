@@ -1,4 +1,4 @@
-export abstract class Repository<K = any, T = any, Z = {}> {
+export abstract class Repository<T = any, K = any, Z = {}> {
   constructor(protected instance: K, protected cache?: Z) {
     this.instance = this.instance;
     this.cache = this.cache;
@@ -6,4 +6,5 @@ export abstract class Repository<K = any, T = any, Z = {}> {
 
   abstract findAll(): Promise<T[]>;
   abstract insertMany(data: T[]): Promise<void>;
+  abstract findOne(reference: string): Promise<T | null>;
 }

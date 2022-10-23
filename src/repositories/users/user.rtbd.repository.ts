@@ -1,12 +1,10 @@
-import * as fs from "fs";
-
 import { Repository } from "../repository.abstract";
 import { IUserRTDB } from "../../interfaces/users/user.rtdb.interface";
 import { Database } from "firebase-admin/lib/database/database";
 
 import { Cache } from "src/services/cache/cache.abstract";
 
-export class UserRTDBRepository extends Repository<Database, IUserRTDB, Cache> {
+export class UserRTDBRepository extends Repository<IUserRTDB, Database, Cache> {
   private path = "/app/users";
 
   private async retrieveRemoteAllData(): Promise<IUserRTDB[]> {
@@ -30,6 +28,10 @@ export class UserRTDBRepository extends Repository<Database, IUserRTDB, Cache> {
   }
 
   insertMany(): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  findOne(reference: string): Promise<IUserRTDB> {
     throw new Error("Method not implemented.");
   }
 }
