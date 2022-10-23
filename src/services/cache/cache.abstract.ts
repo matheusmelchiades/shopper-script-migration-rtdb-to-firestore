@@ -1,5 +1,5 @@
 export abstract class Cache<T = any> {
-  protected dir = __dirname + "/../../tmp";
+  protected dir = __dirname + "/../../../tmp";
   protected path: string;
 
   constructor(protected name: string) {
@@ -11,4 +11,5 @@ export abstract class Cache<T = any> {
   abstract save(data: T): void;
   abstract has(): boolean;
   abstract load(): T;
+  abstract update(data: T): void;
 }

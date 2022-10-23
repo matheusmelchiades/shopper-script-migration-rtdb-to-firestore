@@ -25,6 +25,10 @@ export default {
       ),
       provider: new UserProviderRepository(auth),
       photos: new PhotosRTDBRepository(database),
+    },
+    {
+      cache: new CacheFileSystem("users-migrator"),
+      errors: new CacheFileSystem("users-migrator-errors"),
     }
   ),
 };

@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { Cache } from "./cache.abstract";
 
 export class CacheFileSystem<T = any> extends Cache<T> {
-  async save(data: any): Promise<void> {
+  save(data: any): void {
     try {
       if (!fs.existsSync(this.dir)) {
         fs.mkdirSync(this.dir, { recursive: true });
@@ -19,13 +19,23 @@ export class CacheFileSystem<T = any> extends Cache<T> {
   }
 
   load(): T {
+    if (!this.has()) return [] as T;
+
     try {
       const data = fs.readFileSync(this.path, "utf8");
 
-      return JSON.parse(data);
+      return JSON.parse(data || "[]");
     } catch (err) {
       console.log(err);
       return [] as T;
     }
+  }
+
+  update(data: T): void {
+    const localData = this.load() as T[];
+
+    const update = [...localData, data];
+
+    this.save(update);
   }
 }

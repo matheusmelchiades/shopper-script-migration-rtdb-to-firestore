@@ -22,7 +22,7 @@ export class UserRTDBRepository extends Repository<IUserRTDB, Database, Cache> {
 
     const data = await this.retrieveRemoteAllData();
 
-    await this.cache.save(data);
+    this.cache.save(data);
 
     return data;
   }

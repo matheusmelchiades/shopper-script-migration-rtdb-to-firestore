@@ -21,6 +21,8 @@ export class PhotosRTDBRepository extends Repository<
   }
 
   async findOne(reference: string): Promise<IPhotosRTDB | null> {
+    if (reference === "0KAXB5JCEJMr6DHABOTgNeQB8hG2") throw new Error("Teste");
+
     const snapshot = await this.instance.ref(`${this.path}/${reference}`).get();
 
     if (!snapshot.exists()) return null;

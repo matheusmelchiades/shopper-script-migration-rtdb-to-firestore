@@ -7,16 +7,25 @@ import { UserFirestoreRepository } from "src/repositories/users/user.firestore.r
 import { UserRtdbToFirestoreFactory } from "src/factories/users/user.factory";
 import { UserProviderRepository } from "src/repositories/users/user.provider.repository";
 import { PhotosRTDBRepository } from "src/repositories/photos/photos.repository";
+import { CacheFileSystem } from "src/services/cache/file-system.cache";
+
+interface Repositories extends Record<string, any> {
+  secrets: SecretsRTDBRepository;
+  provider: UserProviderRepository;
+  photos: PhotosRTDBRepository;
+}
+
+interface Caches extends Record<string, any> {
+  cache: CacheFileSystem;
+  errors: CacheFileSystem;
+}
 
 export class UserMigrator extends Migrator<
   UserRTDBRepository,
   UserFirestoreRepository,
   UserRtdbToFirestoreFactory,
-  {
-    secrets: SecretsRTDBRepository;
-    provider: UserProviderRepository;
-    photos: PhotosRTDBRepository;
-  }
+  Repositories,
+  Caches
 > {
   private filterAlreadyExists(prev, target, property = "id") {
     return prev.filter(
@@ -55,14 +64,16 @@ export class UserMigrator extends Migrator<
         metadata,
       });
     } catch (err) {
-      console.log(err, data);
+      this.caches.errors.update(data);
     }
   }
 
   private async handleDependencies(
     data: IUserFirestore[]
   ): Promise<IUserFirestore[]> {
-    return Promise.all(data.map((item) => this.applyDependencies(item)));
+    return Promise.all(data.map((item) => this.applyDependencies(item))).then(
+      (res) => res.filter((item) => !!item)
+    );
   }
 
   async run(): Promise<void> {
@@ -73,6 +84,8 @@ export class UserMigrator extends Migrator<
     const filtereds = this.filterAlreadyExists(firestoreMapped, firestoreData);
 
     const updates = await this.handleDependencies(filtereds);
+
+    this.caches.cache.save(updates);
 
     await this.repoTo.insertMany(updates);
   }
